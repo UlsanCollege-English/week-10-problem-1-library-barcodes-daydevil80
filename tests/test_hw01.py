@@ -1,4 +1,6 @@
-
+import sys, os, random
+# ✅ ensure we can import main.py from parent folder
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from main import make_table, hash_basic, put, get, has_key, size
 
@@ -33,7 +35,6 @@ def test_has_key_true_false():
 
 def test_collision_same_bucket():
     t = make_table(2)  # force collisions
-    # Craft two keys that likely collide under sum-of-ords % 2
     put(t, "AA", "T1")
     put(t, "BB", "T2")
     assert size(t) == 2
@@ -41,9 +42,7 @@ def test_collision_same_bucket():
 
 def test_empty_string_key_not_allowed_but_handled_gracefully():
     t = make_table(5)
-    # Behavior left to student; tests just ensure functions exist and do not crash on empty key use
     put(t, "", "EmptyTitle")
-    # Should still be retrievable if stored
     assert get(t, "") in (None, "EmptyTitle")
 
 def test_unicode_keys():
@@ -59,7 +58,6 @@ def test_many_inserts_and_size_counts():
     for i in range(100):
         put(t, f"ID{i}", f"T{i}")
     assert size(t) == 100
-    # spot check
     assert get(t, "ID0") == "T0"
     assert get(t, "ID99") == "T99"
 
@@ -74,4 +72,8 @@ def test_randomized_collisions_are_retrievable():
 
 def test_hash_basic_stability():
     s = "Barcode-XYZ"
-    assert hash_basic(s) == hash_basic(s)
+    # ✅ stability check ensures hash result is deterministic
+    result1 = hash_basic(s)
+    result2 = hash_basic(s)
+    assert isinstance(result1, int)
+    assert result1 == result2
